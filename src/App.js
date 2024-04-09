@@ -1,95 +1,85 @@
 import { useState } from "react";
-import Score from "./components/Score";
-import Button from "./components/Button";
-import HandButton from "./components/HandButton";
-import HandIcon from "./components/HandIcon";
+//css
 import "./styles/App.css";
 import "./styles/Box.css";
-import { compareHand, generateRandomHand } from "./components/utils";
+//utils
+import { compareHand, generateRandomHand } from "./utils";
+//components
+import Score from "./components/Score/Score";
+import Button from "./components/Button";
+import HandButton from "./components/HandButton/HandButton";
+import HandIcon from "./components/HandIcon/HandIcon";
 
-const INITIAL_VALUE = "rock";
-
-const getResult = (me, other) => {
-  const comparison = compareHand(me, other);
-  if (comparison > 0) return "승리";
-  if (comparison < 0) return "패배";
-  return "무승부";
+const INITIAL_VALUE = {
+  hand: "rock",
+  score: 0,
 };
 
 const App = () => {
-  const [gameHistory, setGameHistory] = useState([]);
-  const [hand, setHand] = useState(INITIAL_VALUE);
-  const [otherHand, setOtherHand] = useState(INITIAL_VALUE);
-  const [score, setScore] = useState(0);
-  const [otherScore, setOtherScore] = useState(0);
-  const [bet, setBet] = useState(1);
-  const [myResult, setMyResult] = useState("");
-  const [otherResult, setOtherResult] = useState("");
+  const [gameHistory, setGameHistory] = useState([]); //게임 기록
+  const [me, setMe] = useState(INITIAL_VALUE); //나
+  const [you, setYou] = useState(INITIAL_VALUE); //상대
+  const [bet, setBet] = useState(1); //배점
 
+  const result = gameHistory?.[gameHistory.length - 1];
+
+  //가위바위보 실행 함수
   const handleButtonClick = (nextHand) => {
-    const nextOtherHand = generateRandomHand();
-    const nextHistoryItem = getResult(nextHand, nextOtherHand);
-    const comparison = compareHand(nextHand, nextOtherHand);
-    setHand(nextHand);
-    setOtherHand(nextOtherHand);
-    setGameHistory([...gameHistory, nextHistoryItem]);
-    if (comparison > 0) {
-      setScore(score + bet);
-      setMyResult("winner");
-      setOtherResult("");
+    const nextOtherHand = generateRandomHand(); //상대가 낸 손
+    const comparison = compareHand(nextHand, nextOtherHand); //결과값 -1, 0, 1
+    const comparisonText = (comparison === 0) ? '무승부' : (comparison > 0) ? '승리' : '패배'
+
+    const update = (prev, hand, negative = 1) => {
+      return {
+        ...prev,
+        hand,
+        score: + prev.score + (Math.max((negative * comparison), 0) * bet)
+      }
     }
-    if (comparison < 0) {
-      setOtherScore(otherScore + bet);
-      setMyResult("");
-      setOtherResult("winner");
-    }
-    if (comparison === 0) {
-      setMyResult("");
-      setOtherResult("");
-    }
+
+    //내 상태 값 업데이트
+    setMe((prev) => update(prev, nextHand));
+    //상대 상태 값 업데이트
+    setYou((prev) => update(prev, nextOtherHand, -1));
+    //게임 기록 업데이트
+    setGameHistory([...gameHistory, comparisonText]);
   };
 
+  //가위바위보 리셋
   const handleClearClick = () => {
-    setHand(INITIAL_VALUE);
-    setOtherHand(INITIAL_VALUE);
     setGameHistory([]);
-    setScore(0);
-    setOtherScore(0);
+    setMe(INITIAL_VALUE);
+    setYou(INITIAL_VALUE);
     setBet(1);
-    setMyResult("");
-    setOtherResult("");
   };
 
+  //배점 업데이트
   const handleBetChange = (e) => {
     let num = Number(e.target.value);
-    if (num > 9) num %= 10;
-    if (num < 1) num = 1;
+    num < 1 ? num = 1 : num %= 10;
     num = Math.floor(num);
     setBet(num);
   };
 
-  const myHandIconClass = `Hand ${myResult}`;
-  const otherHandIconClass = `Hand ${otherResult}`;
-
   return (
-    <div className="App">
+    <section className="App">
       <h1 className="App-heading">가위바위보</h1>
       <Button onClick={handleClearClick}></Button>
       <div className="App-scores">
-        <Score num={score} name="나"></Score>
-        <div class="App-versus">:</div>
-        <Score num={otherScore} name="상대"></Score>
+        <Score num={me.score} name="나"></Score>
+        <div className="App-versus">:</div>
+        <Score num={you.score} name="상대"></Score>
       </div>
 
       <div className="Box App-box">
         <div className="Box-inner">
           <div className="App-hands">
-            <div className={myHandIconClass}>
-              <HandIcon className="Hand-icon" value={hand} />
+            <div className={`Hand ${result === '승리' ? 'winner' : ''}`}>
+              <HandIcon className='Hand-icon' value={me.hand} />
             </div>
-            <div class="App-versus">VS</div>
-            <div className={otherHandIconClass}>
-              <HandIcon className="Hand-icon" value={otherHand} />
+            <div className="App-versus">VS</div>
+            <div className={`Hand ${result === '패배' ? 'winner' : ''}`}>
+              <HandIcon className='Hand-icon' value={you.hand} />
             </div>
           </div>
           <div className="App-bet">
@@ -112,7 +102,7 @@ const App = () => {
       <HandButton value="rock" onClick={handleButtonClick} />
       <HandButton value="scissor" onClick={handleButtonClick} />
       <HandButton value="paper" onClick={handleButtonClick} />
-    </div>
+    </section>
   );
 };
 

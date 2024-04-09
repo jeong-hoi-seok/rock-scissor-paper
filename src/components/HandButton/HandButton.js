@@ -1,5 +1,5 @@
-import HandIcon from "./HandIcon";
-import "../styles/HandButton.css";
+import "./HandButton.css";
+import HandIcon from "../HandIcon/HandIcon";
 
 const HandButton = (props) => {
   const { value, onClick } = props;
