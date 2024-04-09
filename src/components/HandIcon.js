@@ -1,6 +1,7 @@
 import rockImg from "../assets/rock.svg";
 import scissorImg from "../assets/scissor.svg";
 import paperImg from "../assets/paper.svg";
+import "../styles/Hand.css";
 
 const IMAGES = {
   rock: rockImg,
@@ -13,9 +14,7 @@ const HandIcon = (props) => {
   const src = IMAGES[value];
   return (
     <>
-      <div className="Hand">
-        <img className={className} src={src} alt={value} />
-      </div>
+      <img className={className} src={src} alt={value} />
     </>
   );
 };
