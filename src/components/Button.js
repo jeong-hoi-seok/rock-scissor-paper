@@ -1,4 +1,4 @@
-import resetImg from "./assets/ic-reset.svg";
+import resetImg from "../assets/ic-reset.svg";
 
 const Button = (props) => {
   const { onClick } = props;

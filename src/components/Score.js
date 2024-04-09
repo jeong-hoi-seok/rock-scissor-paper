@@ -1,4 +1,4 @@
-import "./Score.css";
+import "../styles/Score.css";
 
 const Score = (props) => {
   const { name, num } = props;

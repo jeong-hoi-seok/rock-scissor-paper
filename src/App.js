@@ -1,10 +1,12 @@
 import { useState } from "react";
-import Score from "./Score";
-import Button from "./Button";
-import HandButton from "./HandButton";
-import Box from "./Box";
-import "./App.css";
-import { compareHand, generateRandomHand } from "./utils";
+import Score from "./components/Score";
+import Button from "./components/Button";
+import HandButton from "./components/HandButton";
+import Box from "./components/Box";
+import "./styles/App.css";
+import { compareHand, generateRandomHand } from "./components/utils";
+
+const INITIAL_VALUE = "rock";
 
 const getResult = (me, other) => {
   const comparison = compareHand(me, other);
@@ -15,6 +17,8 @@ const getResult = (me, other) => {
 
 const App = () => {
   const [gameHistory, setGameHistory] = useState([]);
+  const [hand, setHand] = useState(INITIAL_VALUE);
+  const [otherHand, setOtherHand] = useState(INITIAL_VALUE);
   const [score, setScore] = useState(0);
   const [otherScore, setOtherScore] = useState(0);
   const [bet, setBet] = useState(1);

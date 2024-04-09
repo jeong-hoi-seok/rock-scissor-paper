@@ -1,4 +1,4 @@
-import "./Box.css";
+import "../styles/Box.css";
 import HandIcon from "./HandIcon";
 
 // {
@@ -13,12 +13,7 @@ import HandIcon from "./HandIcon";
 // </div>; */
 // }
 
-const INITIAL_VALUE = "rock";
-
 const Box = (props) => {
-  const [hand, setHand] = useState(INITIAL_VALUE);
-  const [otherHand, setOtherHand] = useState(INITIAL_VALUE);
-
   return (
     <>
       <div className="Box App-box">
